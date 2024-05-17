@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<!-- shop section -->
+<section class="shop_section layout_padding">
+  <div class="container">
+    <div class="heading_container heading_center">
+      <h2>Últimos productos</h2>
+    </div>
+
+    <!-- Formulario de filtrado y ordenamiento -->
+    <form action="{% url 'filter' %}" method="get">
+      <label for="categoria">Filtrar por categoría:</label>
+      <select name="categoria" id="categoria">
+        <option value="">Todas las categorías</option>
+        {% for categoria in categorias %}
+          <option value="{{ categoria.id }}" {% if categoria.id == categoria_seleccionada.id %} selected {% endif %}>{{ categoria.nombre }}</option>
+        {% endfor %}
+      </select>
+      <label for="ordenar">Ordenar por:</label>
+      <select name="ordenar" id="ordenar">
+        <option value="precio_asc" {% if ordenar_por == 'precio_asc' %} selected {% endif %}>Precio de menor a mayor</option>
+        <option value="precio_desc" {% if ordenar_por == 'precio_desc' %} selected {% endif %}>Precio de mayor a menor</option>
+      </select>
+      <input type="submit" value="Filtrar">
+    </form>
+
+    <div class="row">
+      {% for producto in listado %}
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="box d-flex flex-column justify-content-between">
+            <a href="#">
+              <div class="img-box">
+                <img src="{% if producto.imagen %}{{ producto.imagen.url }}{% else %}{% static 'core/images/default_product_image.jpg' %}{% endif %}" alt="{{ producto.nombre }}">
+              </div>
+              <div class="detail-box">
+                <h6>{{ producto.nombre }}</h6>
+                <h6>Precio <span>${{ producto.precio }}</span></h6>
+              </div>
+              <div class="detail-box">
+                <h6>Stock <span>{{ producto.stock }}</span></h6>
+              </div>
+              <div class="new">
+                <span>New</span>
+              </div>
+            </a>
+            {% if user.is_authenticated %}
+            {% if user.username == "admin" %}
+              <div class="admin-buttons mt-auto d-flex align-items-center justify-content-between">
+                <div>
+                  <a class="btn btn-success py-2 px-3" href="{% url 'update' producto.id %}"><i class="fa fa-eye"></i></a>
+                  <a class="btn btn-success py-2 px-3" href="{% url 'delete' producto.id %}"><i class="fa fa-trash"></i></a>
+                </div>
+                <form method="post" action="{% url 'agregar_al_carrito' producto.id %}" class="agregar-carrito-form">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success py-2 px-3 mt-auto agregar-carrito-btn" name="agregar_al_carrito">
+                    <i class="fa fa-cart-plus"></i>
+                  </button>
+                </form>
+              </div>
+            {% else %}
+              <form method="post" action="{% url 'agregar_al_carrito' producto.id %}" class="agregar-carrito-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success py-2 px-3 mt-auto agregar-carrito-btn" name="agregar_al_carrito">
+                  <i class="fa fa-cart-plus"></i>
+                </button>
+              </form>
+            {% endif %}
+          {% else %}
+            <a class="btn btn-success py-2 px-3 mt-auto" href="{% url 'login' %}"><i class="fa fa-cart-plus"></i></a>
+          {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="py-4">
+      {% include 'core/paginator.html' %}
+    </div>
+  </div>
+</section>
+<!-- end shop section -->
+
+<!-- Script para ajustar la altura de los elementos .box -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  var maxHeight = 0;
+  $('.box').each(function() {
+    var boxHeight = $(this).outerHeight();
+    if (boxHeight > maxHeight) {
+      maxHeight = boxHeight;
+    }
+  });
+  $('.box').css('min-height', maxHeight + 'px');
+});
+</script>
+
+
+{% endblock %}

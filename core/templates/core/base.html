@@ -1,0 +1,237 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Básico -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Metas para dispositivos móviles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Metas del sitio -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <link rel="shortcut icon" href="https://res.cloudinary.com/ddglicuiq/image/upload/v1715903159/_1b4243cf-3c9c-4e6d-bcdc-58d909c03650_xaave4.jpg" type="image/x-icon">
+
+  <title>
+    FERREMAS
+  </title>
+
+  <!-- Estilos para el slider -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+  <!-- Estilos básicos de Bootstrap -->
+  <link rel="stylesheet" type="text/css" href="{% static 'core/css/bootstrap.css' %}" />
+
+  <!-- Estilos personalizados para esta plantilla -->
+  <link href="{% static 'core/css/style.css' %}" rel="stylesheet" />
+  <!-- Estilos responsivos -->
+  <link href="{% static 'core/css/responsive.css' %}" rel="stylesheet" />
+  <!-- SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  {% block css %}
+
+
+
+  {% endblock %}
+
+
+</head>
+
+<body>
+  <div class="hero_area">
+    <!-- Sección de encabezado -->
+    <header class="header_section">
+      <nav class="navbar navbar-expand-lg custom_nav-container ">
+        <a class="navbar-brand" href="{% url 'index'%}">
+          <span>
+            FERREMAS
+          </span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class=""></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav  ">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'index'%}">Inicio <span class="sr-only">(actual)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'shop'%}">
+                Tienda
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'why'%}">
+                Por qué elegirnos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'testimonial'%}">  
+                Testimonios
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'enviar_correo'%}">Contáctanos</a>
+              
+            </li>
+
+
+          </ul>
+          <div class="user_option">
+            <a href="{% if user.is_authenticated %}{% url 'logout' %}{% else %}{% url 'login' %}{% endif %}" class="nav-item nav-link">
+                <i class="fa fa-user" aria-hidden="true"></i>
+                <span>
+                  {% if user.is_authenticated %}Cerrar sesión{% else %}Iniciar sesión{% endif %}
+                </span>
+              </a>
+
+            <a href="{% url 'ver_carrito'%}">
+              <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+              <span>
+                Carrito
+              </span>
+            </a>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- Fin de la sección de encabezado -->
+
+
+        <!-- INICIO CONTENIDO -->
+        {% block contenido %}
+
+
+        {% endblock %}
+        <!-- FIN CONTENIDO -->
+
+
+<!-- Sección de información -->
+
+<section class="info_section  layout_padding2-top">
+    <div class="social_container">
+      <div class="social_box">
+        <a href="">
+          <i class="fa fa-facebook" aria-hidden="true"></i>
+        </a>
+        <a href="">
+          <i class="fa fa-twitter" aria-hidden="true"></i>
+        </a>
+        <a href="">
+          <i class="fa fa-instagram" aria-hidden="true"></i>
+        </a>
+        <a href="">
+          <i class="fa fa-youtube" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+    <div class="info_container ">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-lg-3">
+            <h6>
+              SOBRE NOSOTROS
+            </h6>
+            <p>
+              La industria de la construcción y ferretería en Chile ha experimentado un crecimiento sostenido desde la década de los 50, impulsada por el desarrollo urbano y la expansión de infraestructuras.
+            </p>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="info_form ">
+              <h6>
+                Boletín informativo
+              </h6>
+              <form action="#">
+                <input type="email" placeholder="Ingresa tu correo">
+                <button>
+                  Suscribirse
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <h6>
+                ¿Necesitas ayuda?
+            </h6>
+            <p>
+                Comuníquese con nosotros para obtener asistencia.
+            </p>
+        </div>
+          <div class="col-md-6 col-lg-3">
+            <h6>
+              Datos
+            </h6>
+            <div class="info_link-box">
+              <a href="">
+                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                <span> Gb road 123 london Uk </span>
+              </a>
+              <a href="">
+                <i class="fa fa-phone" aria-hidden="true"></i>
+                <span>+01 12345678901</span>
+              </a>
+              <a href="">
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+                <span> demo@gmail.com</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Sección de pie de página -->
+    <footer class=" footer_section">
+      <div class="container">
+        <p>
+          &copy; <span id="displayYear"></span> Todos los derechos reservados por
+          <a href="https://html.design/">Plantillas HTML Gratis</a>
+        </p>
+      </div>
+    </footer>
+    <!-- Sección de pie de página -->
+
+  </section>
+
+  <!-- Fin de la sección de información -->
+
+
+  <script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
+  <script src="{% static 'core/js/bootstrap.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
+  </script>
+  <script src="{% static 'core/js/custom.js' %}"></script>
+
+  {% block js %}
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.nav-link');
+    
+        navLinks.forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                link.parentElement.classList.add('active');
+            });
+    
+            link.addEventListener('mouseleave', function() {
+                link.parentElement.classList.remove('active');
+            });
+        });
+    });
+    </script>
+
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+
+  {% endblock %}
+
+
+</body>
+
+
+</html>

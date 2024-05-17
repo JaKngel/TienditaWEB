@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block css %}
+<style>
+  .book_text {
+    margin-top: 10%;
+  }
+  .register_link {
+    margin-right: 5px;
+  }
+</style>
+{% endblock %}
+{% block contenido %}
+
+<!-- Login section -->
+<section class="contact_section layout_padding">
+  <div class="container">
+    <div class="heading_container heading_center">
+      <h2>
+        Agregar 
+      </h2>
+    </div>
+  </div>
+  <div class="container container-bg">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 px-0">
+      </div>
+      <div class="col-lg-6 col-md-3 px-0">
+        <div class="contact_box">
+          <h1 class="book_text text-center">Agregar producto</h1>
+          <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table>
+              {{ form | crispy }}
+            </table>
+            <div class="text-center pt-1 mb-5 pb-1">
+              <input type="submit" class="btn btn-success" value="Agregar">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- end Login section -->
+
+{% endblock %}
+{% block js %}
+
+{% if messages %}
+  {% for aux in messages %}
+  <script>
+    Swal.fire({
+      title: 'Confirmación',
+      text: '{{ aux }}',
+      icon: 'success',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar'
+    })
+  </script>
+  {% endfor %}
+{% endif %}
+
+{% endblock %}

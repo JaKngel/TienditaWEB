@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<!-- Mostrar los productos del carrito y costo total -->
+<section class="pedido_section layout_padding">
+    <h1>Compra el producto</h1>
+    <a href="{% url 'comprar' %}" class="btn btn-primary">Comprar por $10</a>
+</section>
+
+
+{% endblock %}

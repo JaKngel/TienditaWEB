@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<!-- Sección de error 404 -->
+
+<section class="error_section layout_padding">
+  <div class="container">
+    <div class="heading_container heading_center">
+      <h2>
+        Error 404 - Página no encontrada
+      </h2>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="error_box">
+          <h3>
+            Lo sentimos, la página que estás buscando no pudo ser encontrada.
+          </h3>
+          <p>
+            Parece que has ingresado una URL incorrecta o la página que estás buscando ya no está disponible.
+          </p>
+          <a href="{% url 'index' %}" class="back_btn">Volver al inicio</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fin de la sección de error 404 -->
+{% endblock %}

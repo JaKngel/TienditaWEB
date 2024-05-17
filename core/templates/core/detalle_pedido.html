@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<!-- Confirmación de pedido -->
+<section class="confirmacion_pedido_section layout_padding">
+  <div class="container">
+    <div class="heading_container heading_center">
+      <h2>Confirmación de Pedido</h2>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="alert alert-success" role="alert">
+          ¡Tu pedido ha sido confirmado con éxito!
+        </div>
+        <h4>Detalles del Pedido</h4>
+        <ul>
+          <li><strong>Número de Pedido:</strong> {{ pedido.id }}</li>
+          <li><strong>Fecha:</strong> {{ pedido.fecha_pedido|date:"d/m/Y H:i:s" }}</li>
+        </ul>
+        
+        <h4>Productos Comprados</h4>
+        <ul>
+          {% for detalle in detalles_pedido %}
+            <li>{{ detalle.producto.nombre }} - Cantidad: {{ detalle.cantidad }}</li>
+          {% endfor %}
+        </ul>
+        
+        <!-- Calcular total -->
+        <h4>Total de la Compra</h4>
+        <p>Total: ${{ pedido.calcular_total_pedido }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Fin de Confirmación de pedido -->
+{% endblock %}

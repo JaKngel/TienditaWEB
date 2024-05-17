@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block contenido %}
+
+  <!-- Sección de testimonios -->
+  <section class="client_section layout_padding">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>
+          Testimonios
+        </h2>
+      </div>
+    </div>
+    <div class="container px-0">
+      <div id="customCarousel2" class="carousel  carousel-fade" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="box">
+              <div class="client_info">
+                <div class="client_name">
+                  <h5>
+                    Ana María
+                  </h5>
+                  <h6>
+                    Cliente satisfecha
+                  </h6>
+                </div>
+                <i class="fa fa-quote-left" aria-hidden="true"></i>
+              </div>
+              <p>
+                Estoy encantada con el servicio que brindan. Siempre son muy profesionales y amables. ¡Los recomiendo totalmente! Su atención personalizada y eficiente hace que trabajar con ellos sea una experiencia única y satisfactoria.
+              </p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="box">
+              <div class="client_info">
+                <div class="client_name">
+                  <h5>
+                    Carlos García
+                  </h5>
+                  <h6>
+                    Cliente leal
+                  </h6>
+                </div>
+                <i class="fa fa-quote-left" aria-hidden="true"></i>
+              </div>
+              <p>
+                Llevo años confiando en esta empresa y nunca me han decepcionado. Su atención al cliente es excepcional y su calidad de trabajo es insuperable.
+              </p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="box">
+              <div class="client_info">
+                <div class="client_name">
+                  <h5>
+                    Marta López
+                  </h5>
+                  <h6>
+                    Cliente feliz
+                  </h6>
+                </div>
+                <i class="fa fa-quote-left" aria-hidden="true"></i>
+              </div>
+              <p>
+                Gracias a ellos, mi proyecto se ha convertido en realidad. Son un equipo comprometido y dedicado. ¡No puedo estar más satisfecha con su trabajo!
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="carousel_btn-box">
+          <a class="carousel-control-prev" href="#customCarousel2" role="button" data-slide="prev">
+            <i class="fa fa-angle-left" aria-hidden="true"></i>
+            <span class="sr-only">Anterior</span>
+          </a>
+          <a class="carousel-control-next" href="#customCarousel2" role="button" data-slide="next">
+            <i class="fa fa-angle-right" aria-hidden="true"></i>
+            <span class="sr-only">Siguiente</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- fin de la sección de testimonios -->
+
+{% endblock %}

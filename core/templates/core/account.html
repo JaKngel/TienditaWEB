@@ -1,0 +1,75 @@
+{% extends 'core/base.html' %} {% load static %} {% block contenido %}
+<!-- sección de por qué -->
+<section class="why_section layout_padding">
+  <div class="container">
+    <div class="heading_container heading_center">
+      <h2>Actualize o registre sus datos para una compra mas eficiente</h2>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="box">
+          <div class="img-box">
+            <i class="fa fa-user"> </i>
+          </div>
+          <div class="detail-box">
+            <h5>User:</h5>
+
+            {% if user.is_authenticated %}
+            <div class="welcome-message">
+              <p>{{ user.username }}</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="box">
+          <div class="img-box">
+            <i class="fa fa-user"> </i>
+          </div>
+          <div class="detail-box">
+            <h5>User:</h5>
+
+            {% if user.is_authenticated %}
+            <div class="welcome-message">
+              <p>{{ user.username }}</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="box">
+          <div class="img-box">
+            <i class="fa fa-user"> </i>
+          </div>
+          <div class="detail-box">
+            <h5>User:</h5>
+
+            {% if user.is_authenticated %}
+            <div class="welcome-message">
+              <p>{{ user.username }}</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<!-- fin de la sección de por qué -->
+
+{% if messages %} {% for aux in messages %}
+<script>
+  Swal.fire({
+    title: "Confirmación",
+    text: "{{ aux }}",
+    icon: "success",
+    showCancelButton: false,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Aceptar",
+  });
+</script>
+{% endfor %} {% endif %} {% endblock %}

@@ -1,0 +1,15 @@
+django
+django-admin-interface
+django-crispy-forms==1.14.0
+pillow
+django-rest-framework
+pymysql
+django-jazzmin
+django-extensions
+psycopg2-binary
+cloudinary
+resend
+mercadopago
+whitenoise
+
+##  pip install -r requirements.txt
