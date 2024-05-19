@@ -159,6 +159,12 @@ cloudinary.config(
     secure=True,
 )
 
+# Obtener el valor de la variable de entorno
+MERCADO_PAGO_ACCESS_TOKEN = env('MERCADO_PAGO_ACCESS_TOKEN')
+
+# Obtener el valor de la variable de entorno
+RESEND_API_KEY = env('RESEND_API_KEY')
+
 # CONFIGURANDO EL SISTEMA DE MENSAJERIA DE DJANGO
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 

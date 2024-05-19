@@ -1,14 +1,17 @@
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse, reverse_lazy
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
+from django.contrib.auth.models import Group
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
 
 # Imports de terceros
 import mercadopago
+import resend
 from mercadopago import SDK
 from rest_framework import viewsets
 
@@ -16,6 +19,10 @@ from rest_framework import viewsets
 from .models import *
 from .forms import *
 from .serializers import *
+
+
+
+
 
 #Nos permite mostrar la info
 class ProductoViewset(viewsets.ModelViewSet):
@@ -314,7 +321,7 @@ def realizar_pedido(request):
 
 def comprar(request):
     # Configurar las credenciales de Mercado Pago
-    access_token = "APP_USR-63135490279509-050220-0f06b988556136f38f173f6ab2aade7d-1794398299"
+    access_token = settings.MERCADO_PAGO_ACCESS_TOKEN
 
     # Obtener el costo total y los detalles del pedido de la URL de la solicitud
     costo_total = request.GET.get('costo_total', '0')
@@ -361,11 +368,6 @@ def comprar(request):
     return HttpResponseRedirect(checkout_url)
 
 
-
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import Pedido, DetallePedido
-
 @csrf_exempt
 def recibir_confirmacion(request):
     if request.method == 'GET':
@@ -407,10 +409,7 @@ def detalle_pedido(request, pedido_id):
 
 
 #Correo
-from django.shortcuts import render
-import resend
-
-resend.api_key = "re_gJ1zCnSf_4iKerjNxVHYUyc3epZfEgSG3"
+resend.api_key = settings.RESEND_API_KEY
 
 def enviar_correo(request):
     if request.method == 'POST':
