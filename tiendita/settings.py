@@ -10,28 +10,39 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-from pathlib import Path,os
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-#Claudinary imports
-
+from pathlib import Path
+import environ
+import os
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+
+# Inicializa environ
+env = environ.Env(
+    # Define valores por defecto y tipos de casting
+    DEBUG=(bool, False)
+)
+
+# Define la ruta del archivo .env
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_path = BASE_DIR / '.env'
+
+# Lee el archivo .env
+environ.Env.read_env(env_file=str(env_path))
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-d+_!7yqf2h20eip3afd$x8b%f-1ji6y^r$t@_zwn^a80cxg6ll'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['.vercel.app']
-
 
 # Application definition
 
@@ -52,8 +63,6 @@ INSTALLED_APPS = [
 ]
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -86,38 +95,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tiendita.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-
-"""
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': env.db('DATABASE_URL')
 }
-"""
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'aws-0-sa-east-1.pooler.supabase.com',        
-        'NAME': 'postgres',
-        'USER': 'postgres.gxmgiobbtyklzwwsmsze',
-        'PASSWORD': 'oGKLSOg9jTuzD02J',
-        'PORT': '5432',
-    }
-}
-
-
-
-
 
 # Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -134,7 +120,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -145,7 +130,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -162,27 +146,22 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#Cloudinary configuration
-
+# Cloudinary configuration
 cloudinary.config(
-    cloud_name="ddglicuiq",
-    api_key="722352674931174",
-    api_secret="qDsf_iOAsLnSCPCuZ0dSL6luVdU",
+    cloud_name=env('CLOUDINARY_URL').split('@')[-1],
+    api_key=env('CLOUDINARY_URL').split('//')[-1].split(':')[0],
+    api_secret=env('CLOUDINARY_URL').split(':')[2].split('@')[0],
     secure=True,
 )
-
 
 # CONFIGURANDO EL SISTEMA DE MENSAJERIA DE DJANGO
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
-#configurando la ruta del login
+# Configurando la ruta del login
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'

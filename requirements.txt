@@ -11,5 +11,6 @@ cloudinary
 resend
 mercadopago
 whitenoise
+django-environ
 
 ##  pip install -r requirements.txt
