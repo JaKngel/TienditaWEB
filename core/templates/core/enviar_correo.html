@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% block css %}
 <style>
   .book_text {
@@ -12,7 +13,7 @@
 {% endblock %}
 {% block contenido %}
 
-<!-- Login section -->
+<!-- Contact section -->
 <section class="contact_section layout_padding">
   <div class="container">
     <div class="heading_container heading_center">
@@ -25,23 +26,12 @@
     <div class="row">
       <div class="col-lg-3 col-md-3 px-0">
       </div>
-      <div class="col-lg-6 col-md-3 px-0">
+      <div class="col-lg-6 col-md-6 px-0">
         <div class="contact_box">
           <h1 class="book_text text-center">Enviar Correo Electrónico</h1>
           <form method="post">
             {% csrf_token %}
-            <div class="form-group">
-              <label for="recipient">Destinatario:</label>
-              <input type="email" id="recipient" name="recipient" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="subject">Asunto:</label>
-              <input type="text" id="subject" name="subject" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="html_content">Contenido HTML:</label>
-              <textarea id="html_content" name="html_content" rows="5" class="form-control" required></textarea>
-            </div>
+            {{ form | crispy }}
             <div class="text-center pt-1 mb-5 pb-1">
               <input type="submit" class="btn btn-success" value="Enviar">
             </div>
@@ -51,25 +41,23 @@
     </div>
   </div>
 </section>
-<!-- end Login section -->
+<!-- end Contact section -->
 
 {% endblock %}
 {% block js %}
-
-{% if messages %}
-  {% for aux in messages %}
-  <script>
-    Swal.fire({
-      title: 'Confirmación',
-      text: '{{ aux }}',
-      icon: 'success',
-      showCancelButton: false,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Aceptar'
-    })
-  </script>
-  {% endfor %}
-{% endif %}
-
+  {% if messages %}
+    {% for message in messages %}
+    <script>
+      Swal.fire({
+        title: '{% if message.tags == "success" %}Confirmación{% else %}Error{% endif %}',
+        text: '{{ message }}',
+        icon: '{% if message.tags == "success" %}success{% else %}error{% endif %}',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Aceptar'
+      })
+    </script>
+    {% endfor %}
+  {% endif %}
 {% endblock %}

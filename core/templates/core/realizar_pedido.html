@@ -1,42 +1,219 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
+{% block css %}
+<style>
+  .ui-w-40 {
+    width: 40px !important;
+    height: auto;
+  }
 
+  .card {
+    box-shadow: 0 1px 15px 1px rgba(52, 40, 104, 0.08);
+  }
+
+  .ui-product-color {
+    display: inline-block;
+    overflow: hidden;
+    margin: 0.144em;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 10rem;
+    -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+    vertical-align: middle;
+  }
+
+  .card{
+    margin: auto;
+    max-width: 950px;
+    width: 90%;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 1rem;
+    border: transparent;
+}
+@media(max-width:767px){
+    .card{
+        margin: 3vh auto;
+    }
+}
+.cart{
+    background-color: #fff;
+    padding: 4vh 5vh;
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
+}
+@media(max-width:767px){
+    .cart{
+        padding: 4vh;
+        border-bottom-left-radius: unset;
+        border-top-right-radius: 1rem;
+    }
+}
+.summary{
+    background-color: #ddd;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    padding: 4vh;
+    color: rgb(65, 65, 65);
+}
+@media(max-width:767px){
+    .summary{
+    border-top-right-radius: unset;
+    border-bottom-left-radius: 1rem;
+    }
+}
+.summary .col-2{
+    padding: 0;
+}
+.summary .col-10
+{
+    padding: 0;
+}
+.title b{
+    font-size: 1.5rem;
+}
+.main{
+    margin: 0;
+    padding: 2vh 0;
+    width: 100%;
+}
+.col-2, .col{
+    padding: 0 1vh;
+}
+a{
+    padding: 0 1vh;
+}
+
+.close{
+    margin-left: auto;
+    font-size: 0.7rem;
+}
+img{
+    width: 3.5rem;
+}
+.back-to-shop{
+    margin-top: 4.5rem;
+}
+h5{
+    margin-top: 4vh;
+}
+hr{
+    margin-top: 1.25rem;
+}
+form{
+    padding: 2vh 0;
+}
+select{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1.5vh 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+input{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1vh;
+    margin-bottom: 1vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+input:focus::-webkit-input-placeholder
+{
+      color:transparent;
+}
+.btn{
+    background-color: #000;
+    border-color: #000;
+    color: white;
+    width: 100%;
+    font-size: 0.7rem;
+    margin-top: 4vh;
+    padding: 1vh;
+    border-radius: 0;
+}
+.btn-square {
+  border: none;
+  border-radius: 0;
+  background-color: rgb(190, 16, 16);
+  color: white;
+  padding: 1vh;
+  font-size: 0.7rem;
+}
+.btn:focus{
+    box-shadow: none;
+    outline: none;
+    box-shadow: none;
+    color: white;
+    transition: none; 
+}
+.btn:hover{
+    color: white;
+}
+a{
+    color: black; 
+}
+a:hover{
+    color: black;
+    text-decoration: none;
+}
+
+
+</style>
+{% endblock %}
 {% block contenido %}
-<!-- Mostrar los productos del carrito y costo total -->
-<section class="pedido_section layout_padding">
-  <div class="container">
-    <!-- Lista de productos en el carrito -->
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <h3>Productos en el Carrito:</h3>
+<div class="container px-3 my-5 clearfix">
+  <div class="card">
+    <div class="row">
+      <div class="col-md-8 cart">
+        <!-- Mostrar los productos del carrito y permitir modificar -->
+        <div class="title">
+          <div class="row">
+            <div class="col"><h4><b>Productos</b></h4></div>
+            <div class="col align-self-center text-right text-muted">{{ carrito_items.count }} items</div>
+          </div>
+        </div>
         <ul>
           {% for item in carrito_items %}
-          <li>{{ item.producto.nombre }} - Cantidad: {{ item.cantidad }}</li>
+          <li>
+            <div class="row border-top border-bottom">
+              <div class="row main align-items-center">
+                <div class="col-2"><img class="img-fluid" src="{{ item.producto.imagen.url }}"></div>
+                <div class="col-3">
+                  <div class="row text-muted">{{ item.producto.categoria }}</div>
+                  <div class="row" style="font-size: 0.9rem;">{{ item.producto.nombre }}</div>
+                </div>
+                <div class="col" style="margin-right: 1rem;">&dollar; {{ item.producto.precio }}</div>
+                <div class="col align-middle p-4">
+                  <div class="row" style="font-size: 0.9rem;">Cantidad: {{ item.cantidad }}</div>
+                </div>
+              </div>
+            </div>
+          </li>
           {% endfor %}
         </ul>
+        <div class="back-to-shop"><a href="{% url 'ver_carrito' %}">&leftarrow; <span class="text-muted">Actualizar carrito</span></a></div>
       </div>
-    </div>
-    
-    <!-- Costo total -->
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <h4>Costo Total: ${{ costo_total }}</h4>
-      </div>
-    </div>
-
-    <!-- Formulario de pago con Mercado Pago -->
-    <div class="row justify-content-center">
-      <div class="col-md-6">
+      <div class="col-md-4 summary">
+        <!-- Mostrar el resumen del carrito y el botón de pagar -->
+        <div><h5><b>Detalle</b></h5></div>
+        <hr>
+        <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+          <div class="col">Costo Total</div>
+          <div class="col text-right">&dollar; {{ costo_total }}</div>
+        </div>
         <form action="{% url 'realizar_pedido' %}" method="post">
           {% csrf_token %}
           <input type="hidden" name="token" id="token" value="">
-          <!-- Otros campos del formulario como nombre, dirección, etc. -->
+          <!-- Mostrar el formulario de dirección de entrega -->
+          <h5><b>Dirección de Entrega</b></h5>
+          {{ shipping_form|crispy }}
           <button type="submit" class="btn btn-success">Pagar con Mercado Pago</button>
         </form>
       </div>
     </div>
   </div>
-</section>
-
-
+</div>
 {% endblock %}

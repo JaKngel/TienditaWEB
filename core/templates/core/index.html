@@ -14,14 +14,14 @@
                   <div class="col-md-7">
                     <div class="detail-box">
                       <h1>
-                        Welcome To Our <br>
-                        Gift Shop
+                        Bienvenido a nuestra<br>
+                        tienda en línea
                       </h1>
                       <p>
-                        Sequi perspiciatis nulla reiciendis, rem, tenetur impedit, eveniet non necessitatibus error distinctio mollitia suscipit. Nostrum fugit doloribus consequatur distinctio esse, possimus maiores aliquid repellat beatae cum, perspiciatis enim, accusantium perferendis.
+                        Bienvenido a Ferramas, tu tienda en línea de articulos de ferreteria, donde encontraras todo lo que necesitas para tu hogar o empresa.
                       </p>
-                      <a href="">
-                        Contact Us
+                      <a href="{% url 'enviar_correo' %}">
+                        Contactanos
                       </a>
                     </div>
                   </div>
@@ -51,47 +51,58 @@
       </h2>
     </div>
     <div class="row">
-      {% for aux in listado %}
+      {% for producto in listado %}
         <div class="col-sm-6 col-md-4 col-lg-3">
           <div class="box">
             <a href="#">
               <div class="img-box">
-                <img src="{{ aux.imagen_url }}" alt="{{ aux.nombre }}">
+                <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}">
               </div>
               <div class="detail-box">
-                <h6>{{ aux.nombre }}</h6>
-                <h6>Price <span>${{ aux.precio }}</span></h6>
+                <h6>{{ producto.nombre }}</h6>
+                <h6>Precio <span>${{ producto.precio }}</span></h6>
+              </div>
+              <div class="detail-box">
+                <h6>Stock <span>{{ producto.stock }}</span></h6>
               </div>
               <div class="new">
                 <span>New</span>
               </div>
             </a>
             {% if user.is_authenticated %}
-              {% if user.username == "admin" %}
-                <div class="admin-buttons">
-                  <a class="btn btn-success py-2 px-3" href="{% url 'update' aux.id %}"><i class="fa fa-eye"></i></a>
-                  <a class="btn btn-success py-2 px-3" href="{% url 'delete' aux.id %}"><i class="fa fa-trash"></i></a>
+            {% if user.username == "admin" %}
+              <div class="admin-buttons mt-auto d-flex align-items-center justify-content-between">
+                <div>
+                  <a class="btn btn-success py-2 px-3" href="{% url 'update' producto.id %}"><i class="fa fa-eye"></i></a>
+                  <a class="btn btn-success py-2 px-3" href="{% url 'delete' producto.id %}"><i class="fa fa-trash"></i></a>
                 </div>
-              {% else %}
-                <a class="btn btn-success py-2 px-3" href=""><i class="fa fa-cart-plus"></i></a>
-              {% endif %}
+                <form method="post" action="{% url 'agregar_al_carrito' producto.id %}" class="agregar-carrito-form">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success py-2 px-3 mt-auto agregar-carrito-btn" name="agregar_al_carrito">
+                    <i class="fa fa-cart-plus"></i>
+                  </button>
+                </form>
+              </div>
             {% else %}
-              <a class="btn btn-success py-2 px-3" href="{% url 'login' %}"><i class="fa fa-cart-plus"></i></a>
+              <form method="post" action="{% url 'agregar_al_carrito' producto.id %}" class="agregar-carrito-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success py-2 px-3 mt-auto agregar-carrito-btn" name="agregar_al_carrito">
+                  <i class="fa fa-cart-plus"></i>
+                </button>
+              </form>
             {% endif %}
+          {% else %}
+            <a class="btn btn-success py-2 px-3 mt-auto" href="{% url 'login' %}"><i class="fa fa-cart-plus"></i></a>
+          {% endif %}
           </div>
         </div>
       {% endfor %}
     </div>
-    <div class="py-4">
-      {% include 'core/paginator.html' %}
-    </div>
-
     <div class="btn-box">
       <a href="{% url 'shop' %}">
         Ver todos los prouctos
       </a>
     </div>
-
   </div>
 </section>
 <!-- end shop section -->
@@ -111,19 +122,19 @@
             <div class="detail-box">
               <div class="heading_container">
                 <h2>
-                  Best Savings on <br>
-                  new arrivals
+                  Los mejores productos <br>
+                  siempre en Ferramas
                 </h2>
               </div>
               <p>
-                Qui ex dolore at repellat, quia neque doloribus omnis adipisci, ipsum eos odio fugit ut eveniet blanditiis praesentium totam non nostrum dignissimos nihil eius facere et eaque. Qui, animi obcaecati.
+                Si te interesa comprar productos de ferreteria, en Ferramas encontraras los mejores productos con los mejores precios.
               </p>
               <div class="btn-box">
                 <a href="#" class="btn1">
-                  Buy Now
+                  Comprar Ahora
                 </a>
                 <a href="#" class="btn2">
-                  See More
+                  Ver más
                 </a>
               </div>
             </div>
@@ -155,7 +166,7 @@
                 Entrega Rápida
               </h5>
               <p>
-                Variedades de pasajes de Lorem Ipsum disponibles
+                Con nosotros siempre tendrás tu entrega a tiempo
               </p>
             </div>
           </div>
@@ -167,10 +178,10 @@
             </div>
             <div class="detail-box">
               <h5>
-                Envío Gratis
+                Envío Seguro
               </h5>
               <p>
-                Variedades de pasajes de Lorem Ipsum disponibles
+                Tus productos siempre llegaran en perfecto estado
               </p>
             </div>
           </div>
@@ -185,7 +196,7 @@
                 Mejor Calidad
               </h5>
               <p>
-                Variedades de pasajes de Lorem Ipsum disponibles
+                Solo vendemos productos de la mejor calidad
               </p>
             </div>
           </div>
@@ -194,6 +205,7 @@
     </div>
   </section>
   <!-- end why section -->
+
 
 
 

@@ -1,54 +1,223 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% block css %}
+<style>
+  .ui-w-40 {
+    width: 40px !important;
+    height: auto;
+  }
 
+  .card {
+    box-shadow: 0 1px 15px 1px rgba(52, 40, 104, 0.08);
+  }
+
+  .ui-product-color {
+    display: inline-block;
+    overflow: hidden;
+    margin: 0.144em;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 10rem;
+    -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+    vertical-align: middle;
+  }
+
+  .card{
+    margin: auto;
+    max-width: 950px;
+    width: 90%;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 1rem;
+    border: transparent;
+}
+@media(max-width:767px){
+    .card{
+        margin: 3vh auto;
+    }
+}
+.cart{
+    background-color: #fff;
+    padding: 4vh 5vh;
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
+}
+@media(max-width:767px){
+    .cart{
+        padding: 4vh;
+        border-bottom-left-radius: unset;
+        border-top-right-radius: 1rem;
+    }
+}
+.summary{
+    background-color: #ddd;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    padding: 4vh;
+    color: rgb(65, 65, 65);
+}
+@media(max-width:767px){
+    .summary{
+    border-top-right-radius: unset;
+    border-bottom-left-radius: 1rem;
+    }
+}
+.summary .col-2{
+    padding: 0;
+}
+.summary .col-10
+{
+    padding: 0;
+}
+.title b{
+    font-size: 1.5rem;
+}
+.main{
+    margin: 0;
+    padding: 2vh 0;
+    width: 100%;
+}
+.col-2, .col{
+    padding: 0 1vh;
+}
+a{
+    padding: 0 1vh;
+}
+
+.close{
+    margin-left: auto;
+    font-size: 0.7rem;
+}
+img{
+    width: 3.5rem;
+}
+.back-to-shop{
+    margin-top: 4.5rem;
+}
+h5{
+    margin-top: 4vh;
+}
+hr{
+    margin-top: 1.25rem;
+}
+form{
+    padding: 2vh 0;
+}
+select{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1.5vh 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+input{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1vh;
+    margin-bottom: 1vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+input:focus::-webkit-input-placeholder
+{
+      color:transparent;
+}
+.btn{
+    background-color: #000;
+    border-color: #000;
+    color: white;
+    width: 100%;
+    font-size: 0.7rem;
+    margin-top: 4vh;
+    padding: 1vh;
+    border-radius: 0;
+}
+.btn-square {
+  border: none;
+  border-radius: 0;
+  background-color: rgb(190, 16, 16);
+  color: white;
+  padding: 1vh;
+  font-size: 0.7rem;
+}
+.btn:focus{
+    box-shadow: none;
+    outline: none;
+    box-shadow: none;
+    color: white;
+    transition: none; 
+}
+.btn:hover{
+    color: white;
+}
+a{
+    color: black; 
+}
+a:hover{
+    color: black;
+    text-decoration: none;
+}
+
+
+</style>
+{% endblock %}
 {% block contenido %}
-<!-- Carrito de compras -->
-<section class="carrito_section layout_padding">
-  <div class="container">
-    <div class="heading_container heading_center">
-      <h2>Carrito de Compras</h2>
-    </div>
-
-    <div class="table-responsive">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Stock</th>
-            <th>Subtotal</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item, subtotal in carrito_subtotales %}
-          <tr>
-            <td>{{ item.producto.nombre }}</td>
-            <td>${{ item.producto.precio }}</td>
-            <td>
-              <form action="{% url 'actualizar_carrito' item.id %}" method="post">
+<div class="container px-3 my-5 clearfix">
+  <div class="card">
+    <div class="row">
+      <div class="col-md-8 cart">
+        <div class="title">
+          <div class="row">
+            <div class="col"><h4><b>Carrito</b></h4></div>
+            <div class="col align-self-center text-right text-muted">{{ total_productos }} cantidad</div>
+          </div>
+        </div>
+        {% for item, subtotal in carrito_subtotales %}
+        <div class="row border-top border-bottom">
+          <div class="row main align-items-center">
+            <div class="col-2"><img class="img-fluid" src="{{ item.producto.imagen.url }}"></div>
+            <div class="col-3">
+              <div class="row text-muted">{{ item.producto.categoria }}</div>
+              <div class="row" style="font-size: 0.9rem;">{{ item.producto.nombre }}</div>
+            </div>
+            <div class="col" style="margin-right: 1rem;">
+              <form action="{% url 'actualizar_carrito' item.id %}" method="post" class="update-form">
                 {% csrf_token %}
-                <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1" max="{{ item.producto.stock }}">
-                <button type="submit" class="btn btn-primary btn-sm">Actualizar</button>
+                <input type="number" class="form-control text-center cantidad" name="cantidad" value="{{ item.cantidad }}" min="1" max="{{ item.producto.stock }}">
+                <button type="submit" class=" btn-primary btn-sm">Actualizar</button>
               </form>
-            </td>
-            <td>{{ item.producto.stock }}</td>  <!-- Mostrar el stock disponible -->
-            <td>${{ subtotal }}</td>  <!-- Mostrar el subtotal calculado en la vista -->
-            <td>
-              <a class="btn btn-danger btn-sm" href="{% url 'eliminar_del_carrito' item.id %}">Eliminar</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="text-right mt-4">
-      <h4>Total: ${{ total }}</h4>
-      <a class="btn btn-success" href="{% url 'realizar_pedido' %}">Realizar Pedido</a>
+            </div>
+            <div class="col" style="margin-right: 1rem;">&dollar; {{ item.producto.precio }}</div>
+            <div class="col align-middle p-4">
+              <form action="{% url 'eliminar_del_carrito' item.id %}" method="post" class="delete-form">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger btn-square btn-sm">Eliminar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+       <div class="back-to-shop"><a href="{% url 'shop'%}">&leftarrow; <span class="tex t-muted">Volver a la tienda</span></a></div>
+      </div>
+      <div class="col-md-4 summary">
+        <div><h5><b>Detalle</b></h5></div>
+        <hr>
+        <form>
+          <p>ENVIO</p>
+          <select><option class="text-muted">Delivery &dollar;5.000</option></select>
+        </form>
+        <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+          <div class="col">COSTO EN DÓLARES</div>
+          <div class="col text-right">&dollar; {{ valor_total_usd }}</div>
+      </div>
+      <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+          <div class="col">TOTAL</div>
+          <div class="col text-right">&dollar; {{ total }}</div>
+      </div>
+      <a href="{% url 'realizar_pedido' %}" class="btn btn-lg btn-primary mt-2">Checkout</a>
+      </div>
     </div>
   </div>
-</section>
-<!-- Fin del Carrito de Compras -->
+</div>
 {% endblock %}

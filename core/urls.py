@@ -19,11 +19,14 @@ urlpatterns = [
 
     #REGISTRO
     path('registro/', registro, name="registro"),
+    path('registroAdminVen/', registroAdminVen, name="registroAdminVen"),
+    path('registroAdminBod/', registroAdminBod, name="registroAdminBod"),
     #LOGOUT
     path('accounts/logout/', views.logout_view, name='logout'),
 
     #CRUD
     path('add/', add, name="add"),
+    path('add-category/', addCategory, name="addCategory"),
     path('update/<id>/', update, name="update"),
     path('delete/<id>/', delete, name="delete"),
 

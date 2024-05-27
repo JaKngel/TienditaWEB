@@ -42,7 +42,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['.vercel.app','127.0.0.1']
 
 # Application definition
 
@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django.contrib.humanize',
     'cloudinary',
+    'captcha',
 ]
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -98,9 +99,28 @@ WSGI_APPLICATION = 'tiendita.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
+
+"""
 DATABASES = {
     'default': env.db('DATABASE_URL')
 }
+"""
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+
+
+
+
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

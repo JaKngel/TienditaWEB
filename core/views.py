@@ -8,9 +8,11 @@ from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpRespo
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 # Imports de terceros
 import mercadopago
+import requests
 import resend
 from mercadopago import SDK
 from rest_framework import viewsets
@@ -53,6 +55,20 @@ def add(request):
     return render(request, 'core/add-product.html', data)
 
 @user_passes_test(es_admin_o_trabajador)
+def addCategory(request):
+    if request.method == 'POST':
+        formulario = CategoryForm(request.POST, files=request.FILES)
+        if formulario.is_valid():
+            formulario.save()
+            messages.success(request, "Producto almacenado correctamente")
+            return redirect('addCategory')  # Redirige a la página deseada después de guardar
+
+    data = {'form': CategoryForm()}
+    return render(request, 'core/add-category.html', data)
+
+
+
+@user_passes_test(es_admin_o_trabajador)
 def update(request, id):
     producto = Producto.objects.get(id=id)
     data = {
@@ -89,21 +105,30 @@ def logout_view(request):
     else:
         return HttpResponseNotAllowed(['POST', 'GET'])  # Return a 405 Method Not Allowed response
 
+
+# FUNCION QUNERICA QUE VALIDA EL GRUPO DEL USUARIO
+def grupo_requerido(nombre_grupo):
+    def decorator(view_fuc):
+        @user_passes_test(lambda user: user.groups.filter(name=nombre_grupo).exists())
+        def wrapper(request, *arg, **kwargs):
+            return view_fuc(request,  *arg, **kwargs)
+        return wrapper
+    return decorator
+
+
 #REGISTRO
 def registro(request):
     if request.method == 'POST':
         formulario = CustomUserCreationForm(request.POST)
         if formulario.is_valid():
             user = formulario.save()
+            # Comprobar si el grupo 'Cliente' existe, si no existe, crearlo
+            grupo_cliente, creado = Group.objects.get_or_create(name='Cliente')
+            # Asignar el usuario al grupo 'Cliente'
+            user.groups.add(grupo_cliente)
 
-            # Autenticar al usuario después del registro
-            username = formulario.cleaned_data["username"]
-            password = formulario.cleaned_data["password1"]
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)  # Autenticar al usuario
-                messages.success(request, "Registro Exitoso. Ahora estás logueado.")
-                return redirect('account')  # Redirige al usuario a la página de inicio o a donde sea necesario
+            messages.success(request, "Registro Exitoso.")
+            return redirect('account')  # Redirige al usuario a la página de inicio o a donde sea necesario
         else:
             messages.error(request, "Error en el formulario. Por favor, corrige los errores.")
 
@@ -112,16 +137,77 @@ def registro(request):
 
     return render(request, 'registration/registro.html', {'form': formulario})
 
+
+
+def registroAdminVen(request):
+    if request.method == 'POST':
+        formulario = CustomUserCreationForm(request.POST)
+        if formulario.is_valid():
+            user = formulario.save()
+            # Comprobar si el grupo 'Vendedor' existe, si no existe, crearlo
+            grupo_vendedor, creado = Group.objects.get_or_create(name='Vendedor')
+            # Asignar el usuario al grupo 'Vendedor'
+            user.groups.clear()  # Limpiar los grupos para evitar duplicados
+            user.groups.add(grupo_vendedor)
+
+            messages.success(request, "Usuario Vendedor creado exitosamente.")
+            return redirect('account')  # Redirige al usuario a la página de inicio o a donde sea necesario
+        else:
+            messages.error(request, "Error en el formulario. Por favor, corrige los errores.")
+
+    else:
+        formulario = CustomUserCreationForm()
+
+    return render(request, 'registration/registroAdminVen.html', {'form': formulario})
+
+
+def registroAdminBod(request):
+    if request.method == 'POST':
+        formulario = CustomUserCreationForm(request.POST)
+        if formulario.is_valid():
+            user = formulario.save()
+            # Comprobar si el grupo 'Bodeguero' existe, si no existe, crearlo
+            grupo_bodeguero, creado = Group.objects.get_or_create(name='Bodeguero')
+            # Asignar el usuario al grupo 'Bodeguero'
+            user.groups.clear()  # Limpiar los grupos para evitar duplicados
+            user.groups.add(grupo_bodeguero)
+
+            messages.success(request, "Usuario Bodeguero creado exitosamente.")
+            return redirect('account')  # Redirige al usuario a la página de inicio o a donde sea necesario
+        else:
+            messages.error(request, "Error en el formulario. Por favor, corrige los errores.")
+
+    else:
+        formulario = CustomUserCreationForm()
+
+    return render(request, 'registration/registroAdminBod.html', {'form': formulario})
+
+
+
+
+
+
 #Paginas
 
 def testimonial(request):
-    return render(request, 'core/testimonial.html')
+    # Obtener el usuario actualmente logueado
+    usuario = request.user
+
+    # Obtener todos los pedidos asociados a ese usuario
+    pedidos = Pedido.objects.filter(usuario=usuario)
+
+    # Obtener todos los detalles de pedidos asociados a esos pedidos
+    detalles_pedido = DetallePedido.objects.filter(pedido__in=pedidos)
+
+    context = {
+        'detalles_pedido': detalles_pedido
+    }
+
+    return render(request, 'core/testimonial.html', context)
 
 def why(request):
     return render(request, 'core/why.html')
 
-def account(request):
-    return render(request, 'core/account.html')
 
 def index(request):
     productosAll = Producto.objects.all()  # Obtener todos los productos
@@ -251,20 +337,7 @@ def eliminar_del_carrito(request, carrito_id):
     # Lógica para eliminar productos del carrito
     pass
 
-def ver_carrito(request):
-    if request.user.is_authenticated:
-        carrito_items = Carrito.objects.filter(usuario=request.user)
-        carrito_subtotales = [(item, item.producto.precio * item.cantidad) for item in carrito_items]
-        total = sum(subtotal for _, subtotal in carrito_subtotales)
-        
-        # Obtener el stock disponible de cada producto en el carrito
-        stocks_disponibles = {item.producto_id: item.producto.stock for item in carrito_items}
 
-        context = {'carrito_subtotales': carrito_subtotales, 'total': total, 'stocks_disponibles': stocks_disponibles}
-        return render(request, 'core/ver_carrito.html', context)
-    else:
-        # Manejar el caso de usuario no autenticado
-        return redirect('login')
     
 
 def eliminar_del_carrito(request, carrito_id):
@@ -283,10 +356,38 @@ def actualizar_carrito(request, item_id):
             item.cantidad = cantidad
             item.save()
     return redirect('ver_carrito')
+
+def ver_carrito(request):
+    if request.user.is_authenticated:
+        carrito_items = Carrito.objects.filter(usuario=request.user)
+        carrito_subtotales = [(item, item.producto.precio * item.cantidad) for item in carrito_items]
+        total = sum(subtotal for _, subtotal in carrito_subtotales)
+        
+        # Obtener el valor del dólar desde la API de Mindicador
+        productos_all = requests.get('https://mindicador.cl/api/dolar').json()
+        valor_usd = productos_all['serie'][0]['valor']
+        
+        # Calcular el valor total del carrito en dólares
+        valor_carrito = total  # Puedes usar el total que ya calculaste o modificarlo según tus necesidades
+        valor_total = valor_carrito / valor_usd 
+
+        context = {
+            'carrito_subtotales': carrito_subtotales,
+            'total': total,
+            'valor_total_usd': round(valor_total, 2),  # Redondear el valor a dos decimales
+            'total_productos': sum(item.cantidad for item in carrito_items),  # Calcular la cantidad total de productos en el carrito
+        }
+        return render(request, 'core/ver_carrito.html', context)
+    else:
+        # Manejar el caso de usuario no autenticado
+        return redirect('login')
+
+
+
     
 def realizar_pedido(request):
     if request.method == 'POST':
-        # Lógica para procesar el pedido sin el uso de formulario
+        # Procesar el pedido
         pedido = Pedido(usuario=request.user)
         pedido.save()
 
@@ -294,7 +395,7 @@ def realizar_pedido(request):
         carrito_items = Carrito.objects.filter(usuario=request.user)
         total_pedido = 0
         for item in carrito_items:
-            detalle_pedido = DetallePedido.objects.create(pedido=pedido, producto=item.producto, cantidad=item.cantidad)
+            DetallePedido.objects.create(pedido=pedido, producto=item.producto, cantidad=item.cantidad)
             
             # Calcular subtotal y sumarlo al total del pedido
             subtotal = item.producto.precio * item.cantidad
@@ -303,28 +404,40 @@ def realizar_pedido(request):
             # Eliminar el producto del carrito
             item.delete()
 
+        # Obtener la dirección de entrega del formulario
+        shipping_user = ShippingAddress.objects.get(user=request.user)
+        shipping_form = ShippingForm(request.POST, instance=shipping_user)
+        if shipping_form.is_valid():
+            shipping_form.save()
+        else:
+            messages.error(request, "Por favor, corrija los errores en el formulario de dirección de entrega.")
+
         # Redirigir al usuario a pagar en Mercado Pago
         return HttpResponseRedirect(reverse('comprar') + f'?pedido_id={pedido.id}&total_pedido={total_pedido}&costo_total={total_pedido}')
     
-    # Obtener los productos del carrito para mostrar en la plantilla y calcular el costo total
     if request.user.is_authenticated:
+        # Obtener los productos del carrito para mostrar en la plantilla y calcular el costo total
         carrito_items = Carrito.objects.filter(usuario=request.user)
         costo_total = sum(item.producto.precio * item.cantidad for item in carrito_items)
+
+        # Obtener la dirección de entrega del usuario
+        shipping_user = ShippingAddress.objects.get(user=request.user)
+        shipping_form = ShippingForm(instance=shipping_user)
+
+        context = {'carrito_items': carrito_items, 'costo_total': costo_total, 'shipping_form': shipping_form}
+        return render(request, 'core/realizar_pedido.html', context)
     else:
-        carrito_items = []
-        costo_total = 0
+        # Manejar el caso de usuario no autenticado
+        return redirect('login')
+    
 
-    context = {'carrito_items': carrito_items, 'costo_total': costo_total}
-    return render(request, 'core/realizar_pedido.html', context)
-
+    
 
 
 def comprar(request):
     # Configurar las credenciales de Mercado Pago
     access_token = settings.MERCADO_PAGO_ACCESS_TOKEN
 
-    # Obtener el costo total y los detalles del pedido de la URL de la solicitud
-    costo_total = request.GET.get('costo_total', '0')
     pedido_id = request.GET.get('pedido_id', '')
 
     # Obtener los detalles del pedido para obtener los nombres de los productos
@@ -337,7 +450,7 @@ def comprar(request):
             "title": producto.nombre,
             "quantity": detalle.cantidad,
             "currency_id": "CLP",
-            "unit_price": producto.precio
+            "unit_price": producto.precio 
         }
         items.append(item)
 
@@ -403,34 +516,74 @@ def recibir_confirmacion(request):
 
 def detalle_pedido(request, pedido_id):
     pedido = get_object_or_404(Pedido, id=pedido_id)
-    detalles_pedido = pedido.detallepedido_set.all()
-    context = {'pedido': pedido, 'detalles_pedido': detalles_pedido}
-    return render(request, 'core/detalle_pedido.html', context)
+    # Verificar si el usuario es el cliente que realizó el pedido o es un administrador
+    if request.user == pedido.usuario or request.user.is_staff:
+        detalles_pedido = pedido.detallepedido_set.all()
+        context = {'pedido': pedido, 'detalles_pedido': detalles_pedido}
+        return render(request, 'core/detalle_pedido.html', context)
+    else:
+        # Redirigir a una página de acceso denegado o mostrar un mensaje de error
+        return redirect('login')
 
 
 #Correo
 resend.api_key = settings.RESEND_API_KEY
 
+
+@login_required
 def enviar_correo(request):
     if request.method == 'POST':
-        sender = "Ferramas <onboarding@resend.dev>"
-        recipient = request.POST.get('recipient')
-        subject = request.POST.get('subject')
-        html_content = request.POST.get('html_content')
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            sender = "Ferramas <onboarding@resend.dev>"
+            recipient = "ang.rojasc@duocuc.cl"
+            subject = "Contacto"
+            Formulario_contacto = form.cleaned_data['Formulario_contacto']
 
-        params = {
-            "sender": sender,
-            "to": [recipient],
-            "subject": subject,
-            "html": html_content,
-        }
+            params = {
+                "sender": sender,
+                "to": [recipient],
+                "subject": subject,
+                "html": Formulario_contacto,
+            }
 
-        try:
-            email = resend.Emails.send(params)
-            messages.success(request, 'Correo enviado exitosamente.')
-            return redirect('enviar_correo')
-        except Exception as e:
-            messages.error(request, f'Error al enviar el correo: {e}')
+            try:
+                email = resend.Emails.send(params)
+                messages.success(request, 'Correo enviado exitosamente.')
+                return redirect('enviar_correo')  
+            except Exception as e:
+                messages.error(request, f'Error al enviar el correo: {e}')
+                return redirect('enviar_correo')  
+        else:
+            messages.error(request, 'Por favor, completa correctamente el CAPTCHA.')
+            return redirect('enviar_correo')  
+    else:
+        form = ContactForm()
 
-    return render(request, 'core/enviar_correo.html')
+    return render(request, 'core/enviar_correo.html', {'form': form})
 
+##Info user
+@login_required
+def account(request):
+	if request.user.is_authenticated:
+		# Get Current User
+		current_user = Profile.objects.get(user__id=request.user.id)
+		# Get Current User's Shipping Info
+		shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
+		
+		# Get original User Form
+		form = UserInfoForm(request.POST or None, instance=current_user)
+		# Get User's Shipping Form
+		shipping_form = ShippingForm(request.POST or None, instance=shipping_user)		
+		if form.is_valid() or shipping_form.is_valid():
+			# Save original form
+			form.save()
+			# Save shipping form
+			shipping_form.save()
+
+			messages.success(request, "¡Tu información ha sido actualizada!")
+			return redirect('account')
+		return render(request, "core/account.html", {'form':form, 'shipping_form':shipping_form})
+	else:
+		messages.success(request, "¡Debes iniciar sesión para acceder a esta página!")
+		return redirect('account')

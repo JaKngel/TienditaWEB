@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+{% endblock %}
+
+{% block contenido %}
+<section class="contact_section layout_padding">
+    <div class="container px-0">
+      <div class="heading_container">
+        <h2 class="">Registro de usuario BODEGUERO</h2>
+      </div>
+    </div>
+    <div class="container container-bg">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 px-0"></div>
+        <div class="col-lg-6 col-md-3 px-0">
+          <div class="contact_box">
+            <form action="" method="post">
+              {% csrf_token %}
+              {{ form | crispy }}
+              <div class="text-center pt-1 mb-3">
+                <input type="submit" value="Registrar" class="btn btn-success">
+              </div>
+            </form>
+            <div class="text-center">
+              <a href="{% url 'index' %}" class="btn btn-outline-danger mr-2">Ir al home</a>
+              <a href="{% url 'login' %}" class="btn btn-outline-danger">Iniciar sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

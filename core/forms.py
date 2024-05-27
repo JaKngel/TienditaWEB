@@ -27,6 +27,30 @@ class CustomUserCreationForm(UserCreationForm):
         }
 
 
+class UserInfoForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('telefono', 'direccion', 'ciudad', 'comuna')
+        labels = {
+            'telefono': 'Teléfono',
+            'direccion': 'Dirección',
+            'ciudad': 'Ciudad',
+            'comuna': 'Comuna',
+        }
+
+
+class ShippingForm(forms.ModelForm):
+    class Meta:
+        model = ShippingAddress
+        fields = ['shipping_full_name', 'shipping_direccion', 'shipping_ciudad', 'shipping_comuna']
+        labels = {
+            'shipping_full_name': 'Nombre completo',
+            'shipping_direccion': 'Dirección',
+            'shipping_ciudad': 'Ciudad',
+            'shipping_comuna': 'Comuna',
+        }
+
+
 
 
 class ProductoForm(ModelForm):
@@ -42,19 +66,35 @@ class ProductoForm(ModelForm):
         fields = '__all__'
 
 
+class CategoryForm(ModelForm):
+
+    class Meta:
+        model = CategoriaProducto
+        #fields = ['nombre','precio','stock','descripcion','tipo']
+        fields = '__all__'
+
+
 
 class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
-        fields = ['direccion_entrega', 'metodo_pago']
+        fields = ['direccion_entrega']
         widgets = {
-            'direccion_entrega': forms.TextInput(attrs={'placeholder': 'Ingrese su dirección de entrega'}),
-            'metodo_pago': forms.Select(attrs={'placeholder': 'Seleccione el método de pago'}),
+            'direccion_entrega': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(PedidoForm, self).__init__(*args, **kwargs)
+        self.fields['direccion_entrega'].queryset = ShippingAddress.objects.filter(user=self.instance.usuario)
         self.fields['direccion_entrega'].label = 'Dirección de entrega'
-        self.fields['metodo_pago'].label = 'Método de pago'
+
+
+
+from django import forms
+from captcha.fields import CaptchaField
+
+class ContactForm(forms.Form):
+    Formulario_contacto = forms.CharField(widget=forms.Textarea, required=True)
+    captcha = CaptchaField()
 
 

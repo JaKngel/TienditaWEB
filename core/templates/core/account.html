@@ -1,75 +1,90 @@
-{% extends 'core/base.html' %} {% load static %} {% block contenido %}
-<!-- sección de por qué -->
-<section class="why_section layout_padding">
-  <div class="container">
-    <div class="heading_container heading_center">
-      <h2>Actualize o registre sus datos para una compra mas eficiente</h2>
+{% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block css %}
+<style>
+  .book_text {
+    margin-top: 10%;
+  }
+  .register_link {
+    margin-right: 5px;
+  }
+</style>
+{% endblock %}
+{% block contenido %}
+
+  <!-- sección -->
+  <section class="why_section">
+    <div class="container">
+        <div class="row mt-4 justify-content-center">
+            <div class="col-md-4">
+                <a href="{% url 'testimonial' %}" class="btn btn-secondary btn-block mb-4">Detalle de Boleta</a>
+            </div>
+            {% if user.is_staff %}
+            <div class="col-md-4">
+                <a href="{% url 'registroAdminVen' %}" class="btn btn-secondary btn-block mb-4">Crear cuentas Vendedor-ADMIN</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'registroAdminBod' %}" class="btn btn-secondary btn-block mb-4">Crear cuentas Bodeguero-ADMIN</a>
+            </div>
+            <div class="col-md-4">
+              <a href="{% url 'add' %}" class="btn btn-secondary btn-block mb-4">Agregar Productos</a>
+          </div>
+          <div class="col-md-4">
+            <a href="{% url 'addCategory' %}" class="btn btn-secondary btn-block mb-4">Agregar Categorias</a>
+        </div>
+            {% endif %}
+        </div>
     </div>
+  </section>
+
+  <!-- fin de la sección  -->
+
+
+<!-- Formulario de actualización de información -->
+<section class="contact_section layout_padding">
+  <div class="container container-bg">
     <div class="row">
-      <div class="col-md-4">
-        <div class="box">
-          <div class="img-box">
-            <i class="fa fa-user"> </i>
-          </div>
-          <div class="detail-box">
-            <h5>User:</h5>
-
-            {% if user.is_authenticated %}
-            <div class="welcome-message">
-              <p>{{ user.username }}</p>
+      <div class="col-lg-3 col-md-3 px-0">
+      </div>
+      <div class="col-lg-6 col-md-3 px-0">
+        <div class="contact_box">
+          <form method="POST" action="{% url 'account' %}">
+            <h2>
+              Actualizar información
+            </h2>
+            <strong>Datos</strong>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <br/><br/>
+            <strong>Informacion de envio </strong>
+            <br/><br/>
+            {{ shipping_form.as_p }}
+            <br/><br/>
+            <div class="text-center pt-1 mb-5 pb-1">
+              <input type="submit" class="btn btn-success" value="Actualizar">
             </div>
-            {% endif %}
-          </div>
+          </form>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="box">
-          <div class="img-box">
-            <i class="fa fa-user"> </i>
-          </div>
-          <div class="detail-box">
-            <h5>User:</h5>
-
-            {% if user.is_authenticated %}
-            <div class="welcome-message">
-              <p>{{ user.username }}</p>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="box">
-          <div class="img-box">
-            <i class="fa fa-user"> </i>
-          </div>
-          <div class="detail-box">
-            <h5>User:</h5>
-
-            {% if user.is_authenticated %}
-            <div class="welcome-message">
-              <p>{{ user.username }}</p>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      
     </div>
   </div>
 </section>
-<!-- fin de la sección de por qué -->
+<!-- Fin del formulario -->
 
-{% if messages %} {% for aux in messages %}
-<script>
-  Swal.fire({
-    title: "Confirmación",
-    text: "{{ aux }}",
-    icon: "success",
-    showCancelButton: false,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Aceptar",
-  });
-</script>
-{% endfor %} {% endif %} {% endblock %}
+{% if messages %}
+  {% for aux in messages %}
+    <script>
+      Swal.fire({
+        title: "Confirmación",
+        text: "{{ aux }}",
+        icon: "success",
+        showCancelButton: false,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Aceptar",
+      });
+    </script>
+  {% endfor %}
+{% endif %}
+{% endblock %}

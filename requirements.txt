@@ -12,5 +12,6 @@ resend
 mercadopago
 whitenoise
 django-environ
+django-simple-captcha
 
 ##  pip install -r requirements.txt

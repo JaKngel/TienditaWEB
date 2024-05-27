@@ -6,9 +6,10 @@
 <section class="confirmacion_pedido_section layout_padding">
   <div class="container">
     <div class="heading_container heading_center">
-      <h2>Confirmación de Pedido</h2>
+      <h2>Estado del Pedido</h2>
     </div>
 
+    {% if pedido.estado == 'pagado' %}
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="alert alert-success" role="alert">
@@ -30,8 +31,20 @@
         <!-- Calcular total -->
         <h4>Total de la Compra</h4>
         <p>Total: ${{ pedido.calcular_total_pedido }}</p>
+        <div class="back-to-shop"><a href="{% url 'testimonial'%}">&leftarrow; <span class="text-muted">Volver todos los detalles</span></a></div>
       </div>
     </div>
+    {% else %}
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="alert alert-danger" role="alert">
+          Lo sentimos, aún no hemos recibido el pago de tu pedido.
+        </div>
+        <p>Por favor, espera a que se confirme el pago para ver los detalles del pedido.</p>
+        <div class="back-to-shop"><a href="{% url 'testimonial'%}">&leftarrow; <span class="text-muted">Volver al inicio</span></a></div>
+      </div>
+    </div>
+    {% endif %}
   </div>
 </section>
 <!-- Fin de Confirmación de pedido -->

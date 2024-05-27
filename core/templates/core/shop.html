@@ -82,7 +82,8 @@
 </section>
 <!-- end shop section -->
 
-<!-- Script para ajustar la altura de los elementos .box -->
+{% block js %}
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
@@ -96,6 +97,8 @@ $(document).ready(function() {
   $('.box').css('min-height', maxHeight + 'px');
 });
 </script>
+{% endblock %}
+
 
 
 {% endblock %}
