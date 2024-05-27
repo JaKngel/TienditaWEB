@@ -127,8 +127,14 @@ def registro(request):
             # Asignar el usuario al grupo 'Cliente'
             user.groups.add(grupo_cliente)
 
-            messages.success(request, "Registro Exitoso.")
-            return redirect('account')  # Redirige al usuario a la página de inicio o a donde sea necesario
+            # Autenticar al usuario después del registro
+            username = formulario.cleaned_data["username"]
+            password = formulario.cleaned_data["password1"]
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)  # Autenticar al usuario
+                messages.success(request, "Registro Exitoso. Ahora estás logueado.")
+                return redirect('account')  # Redirige al usuario a la página de inicio o a donde sea necesario
         else:
             messages.error(request, "Error en el formulario. Por favor, corrige los errores.")
 
