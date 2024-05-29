@@ -547,7 +547,7 @@ def enviar_correo(request):
             Formulario_contacto = form.cleaned_data['Formulario_contacto']
 
             params = {
-                "sender": sender,
+                "from": sender,
                 "to": [recipient],
                 "subject": subject,
                 "html": Formulario_contacto,
